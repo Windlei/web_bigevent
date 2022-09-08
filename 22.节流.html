@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./jquery.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0
+    }
+
+    ul {
+      position: absolute;
+      top: 0px;
+      left: 0;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    body {
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <ul>
+    <li style="background:red"></li>
+    <li style="background:green"></li>
+    <li style="background:orange"></li>
+    <li style="background:gold"></li>
+  </ul>
+
+</body>
+
+<script>
+  // 统一给所有的li设置高度
+  let lis = document.querySelectorAll('li');
+  lis.forEach((item, index) => {
+    //window.innerWidth表示浏览器可视区宽度
+    item.style.width = window.innerWidth + 'px'
+    //window.innerHeight表示浏览器可视区高度
+    item.style.height = window.innerHeight + 'px'
+  });
+
+
+
+  // 无论是在火狐还是谷歌中  向上波动滚轮 得到true  向下波动滚轮得到false
+  // 滚轮事件是密集触发的事件  波动一下 会触发多次
+  document.addEventListener('mousewheel', gl)
+  document.addEventListener('DOMMouseScroll', gl)
+  // 设置节流阀
+  let flag = true // 
+  let num1 = lis.length - 1
+  let num = 0
+  function gl(e) {
+    if (flag) {
+      flag = false;
+      let res = null;
+      // e.wheelDelta存在  表达当前是谷歌环境
+      if (e.wheelDelta) {
+        res = e.wheelDelta > 0 ? true : false
+      } else { // 火狐环境
+        res = e.detail < 0 ? true : false
+      }
+
+      // 判断滚轮方向  实现页面滚动
+      if (res) { // 向上波动滚轮
+        num--;
+        num = num < 0 ? 0 : num
+        let addr = -num * window.innerHeight
+        // 回调函数是在动画结束的时候触发的
+        $('ul').animate({ top: addr }, function () {
+          flag = true;
+        })
+
+      } else { // 向下波动滚轮 页面向上走
+        num++;
+        num = num > num1 ? 0 : num
+        let addr = -num * window.innerHeight
+        // animate的回调函数
+        $('ul').animate({ top: addr }, function () {
+          flag = true;
+        })
+      }
+    }
+
+  }
+</script>
+
+</html>

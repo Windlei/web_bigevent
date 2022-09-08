@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 会改变的值抽离出来
+    let obj = { name: 'ql', age: 18 }
+    function fn(obj) {
+      // let obj = { name: 'ql', age: 18 }
+      let str = ''
+      for (let k in obj) {
+        // 拼接字符串
+        str += k + '=' + obj[k] + '&'
+      }
+      // substring是截取字符串,last是查询最后一位出现的内容
+      str = str.substring(0, str.lastIndexOf('&'))
+      return str
+    }
+    fn(obj)
+
+    let $ = {
+      ajax: function (option) {
+        let xhr = new XMLHttpRequest()
+        // 声明一个变量调用上面的函数把用户输入的值转换为字符串形式
+        let params = fn(option.data)
+        // 判断写的是否为GET请求
+        if (option.type.toUpperCase() == "GET") {
+          // open写入用户请求类型，请求地址加上指定数值params
+          xhr.open(option.type, option.url + "?" + params)
+          xhr.send()
+          // 反之就是向服务器发送数据
+        } else {
+          xhr.open(option.type, option.url)
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+          xhr.send(params)
+        }
+        // 接受服务器返回的数据
+        xhr.onload = function () {
+          // 把获得的数据传递给success函数 'xhr.responseText'就是服务器返回的数据 
+          option.success(JSON.parse(xhr.responseText))
+        }
+      }
+    }
+
+    // 使用定义的$.ajax 
+    $.ajax({
+      type: 'get',
+      url: 'http://www.liulongbin.top:3006/api/getbooks',
+      data: { id: 1 },
+      success: function (msg) {
+        console.log(msg);
+      }
+    })
+  </script>
+</body>
+
+</html>

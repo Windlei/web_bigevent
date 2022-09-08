@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./jquery.min.js"></script>
+  <script src="./js文件/template-web.js"></script>
+</head>
+
+<body>
+
+  <!-- 2.设置解析html标签 -->
+  <script type="text/html" id="tpl">
+  <div>
+    {{each myarr}}
+    {{each $value}}
+    <p>{{$value}}</p>
+    {{/each}}
+    {{/each}}
+  </div>
+  </script>
+  <script>
+    // 1.定义数据
+    const obj = {
+      arr: ['a', 'b', 'c'],
+      myarr: [
+        {
+          name: 'zs',
+          age: 18
+        },
+        {
+          name: 'zs1',
+          age: 20
+        },
+        {
+          name: 'zs2',
+          age: 19
+        }
+      ]
+    }
+    // 3.拼接模板和数据
+    let str = template('tpl', obj)
+    $('body').html(str) 
+  </script>
+</body>
+
+</html>

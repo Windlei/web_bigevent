@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 通过new调用FormData，生成实例对象，该对象可以理解为是一个存在于内存中的虚拟表单
+    let fd = new FormData()
+    // 往fd添加函数，相当于往虚拟表单里面添加数据
+    fd.append('uname', 'zs')
+    fd.append('upwd ', '12345')
+    let xhr = new XMLHttpRequest()
+    xhr.open('post', 'http://www.liulongbin.top:3006/api/formdata')
+    xhr.send(fd)
+    xhr.onload = function () {
+      console.log(JSON.parse(xhr.responseText))
+    }
+  </script>
+</body>
+
+</html>  

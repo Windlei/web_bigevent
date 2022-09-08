@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <form id="form1">
+    <input type="text" name="uname" autocomplete="off" />
+    <input type="password" name="upwd" />
+    <button type="submit">提交</button>
+  </form>
+</body>
+<script>
+  let form = document.querySelector('#form1')
+  form.addEventListener('submit', function (e) {
+    // 阻止表单默认提交事件
+    e.preventDefault()
+    // 获取到所有提交表单元素
+    let fd = new FormData(form)
+    // 使用formdata的时候也可以用append追加
+    fd.append('thirnd', '000')
+
+    let xhr = new XMLHttpRequest()
+    xhr.open('POST', 'http://www.liulongbin.top:3006/api/formdata')
+    // 传递参数
+    xhr.send(fd)
+    xhr.onload = function () {
+      console.log(JSON.parse(xhr.responseText))
+    }
+  })
+</script>
+
+</html>

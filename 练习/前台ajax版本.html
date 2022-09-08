@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../jquery.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 2px;
+            background-color: #F5F5F5;
+        }
+
+        .cloud {
+            background: url('./cloud.jpg');
+            width: 1000px;
+            height: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .onedata {
+            width: 2px;
+            height: 200px;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+            background: lightblue;
+        }
+
+        .datahead {
+            text-align: center;
+            line-height: 50px;
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            color: #fff;
+            background: lightblue;
+            position: absolute;
+            bottom: 0px;
+            left: -24px;
+        }
+
+        .popwarp {
+            z-index: 999;
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .popinnerwarp {
+            width: 500px;
+            height: 400px;
+            background: #fff;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -250px;
+            margin-top: -200px;
+            overflow-y: scroll;
+        }
+
+        .warphead {
+            width: 100%;
+            height: 40px;
+            background: lightblue;
+            text-align: center;
+            line-height: 40px;
+            color: #fff;
+        }
+
+        .warphead span {
+            float: right;
+            margin-right: 10px;
+        }
+
+        .warphead em {
+            float: left;
+            margin-left: 10px;
+            font-style: normal;
+        }
+
+        .form {
+            width: 90%;
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .form div {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            margin-top: 15px;
+        }
+
+        .form div input {
+            width: 80%;
+            height: 30px;
+            margin-left: 30px;
+            float: right;
+        }
+
+        .form div span {
+            float: left;
+        }
+
+        .form div select {
+            width: 70px;
+            height: 30px;
+            float: left;
+            margin-left: 54px;
+        }
+
+        .adddata {
+            border: 0;
+            border-radius: 5px;
+            position: absolute;
+            left: 50px;
+            top: 50px;
+            width: 100px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.3)
+        }
+
+        .deldataall {
+            border: 0;
+            border-radius: 5px;
+            position: absolute;
+            left: 50px;
+            top: 100px;
+            width: 100px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.3)
+        }
+
+        .delete {
+            display: block;
+            margin: 20px auto;
+            margin-bottom: 0px;
+            width: 100px;
+            height: 30px;
+            background: lightblue;
+            color: #fff;
+            text-align: center;
+            line-height: 30px;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="adddata">新增用户</button>
+
+    <button class="deldataall">批量删除</button>
+
+    <div class="cloud">
+        <!--需要循环遍历的元素位置-->
+        <div class="onedata">
+            <!--<div class="datahead">小红</div>-->
+        </div>
+        <!--需要循环遍历的元素位置结束-->
+    </div>
+
+    <!--弹出层位置-->
+    <div class="popwarp">
+        <div class="popinnerwarp">
+            <div class="warphead">
+                <em class="keepdata">保存</em>
+                我是默认的标题
+                <span class="editdata">修改</span>
+            </div>
+
+            <div id="totaldatawarp">
+                <div id="form">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    // 统一的阻止冒泡
+    document.querySelector('.popinnerwarp').onclick = function (e) {
+        e.stopPropagation();
+    }
+
+
+    //产生随机数的函数
+    function RandomNumBoth(Min, Max) {
+        var Range = Max - Min;
+        var Rand = Math.random();
+        var num = Min + Math.round(Rand * Range);
+        //四舍五入
+        return num;
+    }
+    // 获取存放云朵的盒子
+    var cloud = document.querySelector('.cloud');
+    // 获取删除所有的按钮
+    var delall = document.querySelector('.deldataall');
+    // 获取弹出层
+    var popwarp = document.querySelector('.popwarp');
+    // 获取 保存 按钮元素
+    var keepdata = document.querySelector('.keepdata');
+    // 要渲染的html结构
+    var pophtml = `<div class="form">
+                <div><span>用户名</span> <input class="username" name="name" type="text"></div> 
+                <div><span>年龄</span> <input class="age" name="age" type="text"></div>
+                <div>
+                    <span>地址</span> 
+                    <select class="addr" name="addr" id="">
+                      <option value="0">不选择</option>
+                      <option value="1">北京</option>
+                      <option value="2">上海</option>
+                    </select>
+                </div>
+                <button class="delete" >删除</button>
+            </div>`
+
+
+    //发送请求获取所有的用户信息并且渲染到页面上
+    renderajax()
+    function renderajax() {
+        $.ajax({
+            type: "get",
+            url: "http://localhost:3000/getData",
+            success: function (msg) {
+                console.log(msg)
+                if (msg.code == 0) {
+                    data = msg.data;
+                    rendercloud(data)
+                }
+            }
+        })
+    }
+
+
+    /**点击弹出层的 保存 按钮完成向后台发送数据并添加的功能**/
+    function savadata() {
+        keepdata.onclick = function () {
+            var form = $('.form')
+            /**点击弹出层的保存按钮完成向后台发送一条数据并添加的功能**/
+            if (form.length <= 1) {
+                let obj = {
+                    name: $('.username').val(),
+                    age: $('.age').val(),
+                    addr: $('.addr').val()
+                }
+                console.log(obj);
+                $.ajax({
+                    type: "post",
+                    url: "http://localhost:3000/addData",
+                    data: obj,
+                    success: function (msg) {
+                        console.log(msg);
+                        //隐藏遮罩层
+                        popwarp.style.display = "none";
+                        //重新渲染最新的数据到页面上
+                        renderajax();
+                    }
+                })
+            }
+            else {
+                /**批量获取用户信息发送到服务器完成批量新增功能**/
+                var alluserdata = [];
+                // 遍历所有的表单，取出每一个表单的值，塞入数组中，拼接成后端需要的数据
+                form.each(function (index, item) {
+                    console.log($(item))
+                    alluserdata.push({
+                        name: $(item).find('input').eq(0).val(),
+                        age: $(item).find('input').eq(1).val(),
+                        addr: $(item).find('select').val()
+                    })
+                });
+                console.log(alluserdata, "----");
+                $.ajax({
+                    type: "post",
+                    url: "http://localhost:3000/addData",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(alluserdata),
+                    dataType: "json",
+                    success: function (msg) {
+                        console.log(msg);
+                        //隐藏遮罩层
+                        popwarp.style.display = "none";
+                        //重新渲染最新的数据到页面上
+                        renderajax();
+                    }
+                })
+            }
+
+        }
+    }
+
+
+
+    /**单击鼠标右键完成删除某个用户的功能**/
+    cloud.oncontextmenu = function (e) {
+        e.preventDefault();
+        //获取到具体右键点击的元素
+        console.log(e.target)
+        var id = e.target.getAttribute('myid');
+        $.ajax({
+            type: "get",
+            url: "http://localhost:3000/delData",
+            data: { id: id },
+            success: function (msg) {
+                console.log(msg);
+                //重新渲染最新的数据到页面上
+                renderajax();
+            }
+        })
+    }
+
+    /**批量删除所有的用户数据**/
+    delall.onclick = function () {
+        $.ajax({
+            type: "get",
+            url: "http://localhost:3000/delDataAll",
+            success: function (msg) {
+                //重新渲染最新的数据到页面上
+                renderajax();
+            }
+        })
+    }
+
+    /**编辑用户信息的方法**/
+    function edituser(_this) {
+        //首先获取用户的原有数据，填充到表单中
+        $.ajax({
+            type: "get",
+            url: "http://localhost:3000/getData",
+            data: { id: _this.children[0].getAttribute('myid') },
+            success: function (msg) {
+                console.log(msg)
+                //把用户原有信息回填到表单中
+                $('.form').find('input').eq(0).val(msg.data.name);
+                $('.form').find('input').eq(1).val(msg.data.age);
+                $('.form').find('select').val(msg.data.addr);
+
+                keepdata.onclick = function () {
+                    $.ajax({
+                        type: "post",
+                        url: "http://localhost:3000/editData",
+                        data: {
+                            id: msg.data.id,
+                            name: $('.form').find('input').eq(0).val(),
+                            age: $('.form').find('input').eq(1).val(),
+                            addr: $('.form').find('select').val()
+                        },
+                        success: function (res) {
+                            console.log(msg);
+                            //隐藏遮罩层
+                            popwarp.style.display = "none";
+                            //重新渲染最新的数据到页面上
+                            renderajax();
+                        }
+                    })
+                }
+
+            }
+        })
+    }
+
+
+
+
+    // 渲染数据的函数
+    function rendercloud(data) {
+        var str = "";
+        data.forEach((item, index) => {
+            var h = RandomNumBoth(100, 400);
+            var t = RandomNumBoth(200, 400);
+            var l = RandomNumBoth(50, 800)
+
+            str += `<div style="height:${h}px;left:${l}px;top:${t}px;" class="onedata">
+                <div myid="${item.id}" class="datahead">${item.name}</div>
+            </div>`;
+        });
+        cloud.innerHTML = str;
+
+        //获取所有的用户，也就是小球
+        var alldata = document.querySelectorAll('.onedata');
+
+        //遍历所有的小球，给他们添加鼠标滑过事件和鼠标点击事件
+        alldata.forEach(function (item) {
+            //给每个小球添加鼠标划过事件（滑过时候小球方放大）
+            item.onmouseover = function () {
+                alldata.forEach(function (item) {
+                    item.children[0].style.background = "lightblue";
+                    item.children[0].style.zIndex = 1;
+                    item.children[0].style.transform = "scale(1)"
+                })
+                this.children[0].style.background = "pink";
+                this.children[0].style.zIndex = 10;
+                this.children[0].style.transform = "scale(1.2)"
+            }
+            //给每个小球添加鼠标点击事件（点击时候弹出弹出层）  
+            item.onclick = function (e) {
+                console.log(this.children[0].getAttribute('myid'), "---", this);
+                //阻止点击事件冒泡到document身上
+                e.stopPropagation();
+                document.querySelector('.editdata').innerHTML = "编辑"
+                popwarp.style.display = "block";
+                document.querySelector('.editdata').onclick = null;
+                document.querySelector('#totaldatawarp').innerHTML = pophtml;
+                document.querySelector('.delete').style.display = "none";
+                //调用编辑用户信息的方法
+                edituser(this);
+
+            }
+        });
+    }
+
+
+    /**完成点击新增按钮展示弹出层***/
+    //获取新增用户的按钮
+    var addbtn = document.querySelector('.adddata')
+    var htmlstr = pophtml;
+    addbtn.onclick = function (e) {
+        //调用保存用户信息的函数
+        savadata();
+        document.querySelector('.editdata').innerHTML = "新增";
+        popwarp.style.display = "block";
+        document.querySelector('#totaldatawarp').innerHTML = htmlstr;
+        //给每一个新增的删除按钮添加点击事件
+        deletedata();
+        //点击新增可以增加多个输入框，一次性添加多调数据
+        document.querySelector('.editdata').onclick = function (e) {
+            //阻止点击事件冒泡到document身上
+            e.stopPropagation();
+            htmlstr += pophtml;
+            document.querySelector('#totaldatawarp').innerHTML += pophtml;
+            deletedata();
+
+        }
+    }
+
+    //点击页面任何一个位置都会关闭弹出层
+    document.querySelector('.popwarp').onclick = function () {
+        popwarp.style.display = "none";
+    }
+
+
+    //点击删除按钮，删除对应的表单
+    function deletedata() {
+        var alldeletebtn = document.querySelectorAll('.delete');
+        alldeletebtn.forEach(function (item) {
+            item.onclick = function (e) {
+                e.stopPropagation();
+                //每次点击删除按钮，都重新获取一下当前还剩下多少个删除按钮
+                if (document.querySelectorAll('.delete').length > 1) {
+                    this.parentNode.remove();
+                } else {
+                    alert("只剩最后一个，不能删除了")
+                }
+
+            }
+        })
+    }
+
+
+
+
+
+</script>
+
+</html>

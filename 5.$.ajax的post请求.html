@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./jquery.min.js"></script>
+</head>
+<body>
+  <button id ='btnPOST'>点击发送POST请求</button>
+  <script>
+    $(function () {
+      $('#btnPOST').on('click',function(){
+        $.ajax({
+          type:'POST',
+          url:'http://ajax-base-api-t.itheima.net/api/addbook',
+          data:{
+            bookname:'顶真书记',
+            author:'唱山歌',
+            publisher:'妹妹',
+          },
+          success:function(res){
+            console.log(res);
+          }
+        })
+      })
+    })
+  </script>
+</body>
+</html>

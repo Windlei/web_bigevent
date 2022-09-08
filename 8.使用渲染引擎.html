@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./js文件/template-web.js"></script>
+  <script src="./jquery.min.js"></script>
+</head>
+
+<body>
+
+  <div id="container"></div>
+
+  <!-- 定义模板 -->
+  <!-- 模板的HTML的结构一定要义在script中 -->
+  <!-- 定义id类名 -->
+  <script type="text/html" id="tpl-user">
+    <!-- 加上@就不会解析成字符加载到界面上了 -->
+  <h1>{{name}} {{age}} {{@ username}}</h1>
+  <!-- 标准语法的条件输出 -->
+  <div>
+    {{if flag === 0}}
+    flag是0
+    {{else if flag===1}}
+    flag是1
+    {{/if}}
+  </div>
+  <!-- 标准语法each进行循环渲染 -->
+  <ul> 
+    <!-- 遍历hobby -->
+    {{each hobby}}
+    <li>索引是:{{$index}},循环是:{{$value}}</li>
+    {{/each}}
+  </ul>
+  <h3>{{regTime | dateFormat}}</h3>
+  </script>
+
+  <script>
+    // 定义处理时间过滤器
+    template.defaults.imports.dateFormat = function (date) {
+      let y = date.getFullYear()
+      let m = date.getMonth() + 1
+      let d = date.getDate()
+      return y + '-' + m + '-' + d
+    }
+
+    // 定义需要渲染的数据
+    const data = {
+      name: 'zs',
+      age: 20,
+      username: '<h3>测试内容</h3>',
+      flag: 1,
+      hobby: ['吃饭', '睡觉', '写代码'],
+      regTime: new Date()
+    }
+    // 调用template数据
+    const htmlstr = template('tpl-user', data)
+    // 渲染HTML结构
+    $('#container').html(htmlstr)
+  </script>
+</body>
+
+</html>

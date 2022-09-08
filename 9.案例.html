@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="./jquery.min.js"></script>
+  <script src="./js文件/template-web.js"></script>
+</head>
+
+<body>
+  <!-- 2.设置解析html标签 -->
+  <script type="text/html" id="tpl">
+    <!-- <div>{{name}} {{age>=18?成年人:未成年人}} {{hoppy}} {{hoppy2}} {{@ str}}</div> -->
+  <div>
+    {{if flag==1}}
+    <p>我是马nb</p>
+    {{else if flag ==2}}
+    <em>你是大傻春</em>
+    {{/if}}
+  </div>
+  </script>
+  <script>
+    // 1.定义数据
+    // let obj = {
+    //   name: 'zs',
+    //   age: 18,
+    //   hoppy: ['吃饭', '睡觉'],
+    //   hoppy2: { age2: 11 },
+    //   str: '<em>我是马nb</em>'
+    // }
+    let obj = {
+      flag: 2
+    }
+    // 3.拼接模板和数据
+    let str = template('tpl', obj)
+    $('body').html(str) 
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <link rel="stylesheet" href="./assets/news.css" />
+  <script src="./lib/jquery.js"></script>
+  <script src="./lib/template-web.js"></script>
+</head>
+
+<body>
+
+  <div id="news-list">
+
+  </div>
+  <!--定义模板 -->
+  <script type="text/html" id="tpl-news">
+    {{each data}}
+      <div class="news-item">
+        <img class="thumb" src="http://ajax-base-api-t.itheima.net{{$value.img}}" alt="" />
+        <div class="right-box">
+          <h1 class="title">{{$value.title}}</h1>
+          <div class="tags">
+            {{each $value.tags}}
+            <span>{{$value}}</span>
+            {{/each}}
+          </div>
+          <div class="footer">
+            <div>
+              <span>{{$value.source}}</span>&nbsp;&nbsp;
+              <span>{{$value.time | dateFormat}}</span>
+            </div>
+            <span>评论数：{{$value.cmtcount}}</span>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </script>
+
+  <script>
+    function padZero(n) {
+      if (n < 10) {
+        return '0' + n
+      } else {
+        return n
+      }
+    }
+    template.defaults.imports.dateFormat = function (time) {
+      let dt = new Date(time)
+      let y = dt.getFullYear()
+      let m = padZero (dt.getMonth() + 1)
+      let d = padZero (dt.getDate())
+
+      let hh = padZero (dt.getHours())
+      let mm = padZero (dt.getMinutes())
+      let ss = padZero (dt.getSeconds())
+
+      return y + '-' + m + '-' + d + '' + hh + ':' + mm + ':' + ss
+    }
+
+    // template.defaults.imports.timeforat = function (time) {
+    //   let d = new Date(time);
+
+    //   let year = d.getFullYear();
+    //   let month = d.getMonth() + 1
+    //   let date = d.getDate()
+
+    //   let hour = d.getHours();
+    //   let minutes = d.getMinutes();
+    //   let sec = d.getSeconds();
+
+    //   return `${year}-${month}-${date} ${hour}:${minutes}:${sec}`
+
+    // }
+
+    $.ajax({
+      type: 'get',
+      url: 'http://ajax-base-api-t.itheima.net/api/news',
+      success: function (msg) {
+        const { status, data } = msg
+        // 遍历把tags转换为数组
+        for (let i = 0; i < data.length; i++) {
+          data[i].tags = data[i].tags.split(',')
+        }
+        console.log(msg);
+        if (status !== 200) return alert('请求数据失败')
+        let str = template('tpl-news', msg)
+        $('#news-list').html(str)
+      }
+    })
+  </script>
+</body>

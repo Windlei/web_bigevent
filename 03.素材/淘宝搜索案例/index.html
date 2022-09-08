@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <!-- 导入页面的基本样式 -->
+  <link rel="stylesheet" href="./css/search.css" />
+  <!-- 导入 jQuery -->
+  <script src="./lib/jquery.js"></script>
+  <!-- 导入模板引擎 -->
+  <script src="./lib/template-web.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Logo -->
+    <img src="./images/taobao_logo.png" alt="" class="logo" />
+
+    <div class="box">
+      <!-- tab 栏 -->
+      <div class="tabs">
+        <div class="tab-active">宝贝</div>
+        <div>店铺</div>
+      </div>
+      <!-- 搜索区域（搜索框和搜索按钮） -->
+      <div class="search-box">
+        <input type="text" class="ipt" placeholder="请输入要搜索的内容" /><button class="btnSearch">
+          搜索
+        </button>
+      </div>
+      <!-- 搜索建议列表 -->
+      <div id="suggest-list">
+
+      </div>
+    </div>
+  </div>
+  <!-- 模板结构 -->
+  <script type="text/html" id="tpl-suggestList">
+    {{each result}}
+    <!-- 搜索建议项 -->
+    <div class="suggest-item">{{$value[0]}}</div>
+    {{/each}}
+  </script>
+
+  <script>
+    $(function () {
+      // 定义延时器的ID
+      let timer = null
+      // 定义一个全局缓存对象
+      let cacheObj = {}
+      function debounceSearch(kw) {
+        timer = setTimeout(function () {
+          getsuggestList(kw)
+        }, 500)
+      }
+
+      // 给输入框添加一个键盘弹起事件
+      $('.ipt').on('keyup', function () {
+        clearTimeout(timer)
+        // 获得输入框里value值
+        let keywords = $(this).val().trim()
+        if (keywords.length <= 0) {
+          // 如果长度为零就清空建议选项列表并让它隐藏起来
+          return $('#suggest-list').empty().hide()
+        }
+        // 先判断换存是否有数据 如果有数据直接返回已经缓存的数据
+        if(cacheObj[keywords]){
+          return rendersuggesList(cacheObj[keywords])
+        }
+        // 用户输入框的值传递给kw
+        debounceSearch(keywords)
+      })
+
+
+
+      function getsuggestList(kw) {
+        $.ajax({
+          // 链接加上用户输入的内容
+          url: 'https://suggest.taobao.com/sug?q=' + kw,
+          dataType: 'jsonp',
+          success: function (res) {
+            //  res返回的是建议选项列表
+            rendersuggesList(res)
+          }
+        })
+      }
+
+      // 渲染UI结构
+      function rendersuggesList(res) {
+        // 如果返回的值的长度为小于等于零就让搜索建议列表清空并隐藏起来
+        if (res.result.length <= 0) {
+          return $('#suggest-list').empty().hide()
+        }
+        // 如过有数据就调用模板引擎开始渲染 res是上方传递过来要渲染的数据
+        let htmlstr = template('tpl-suggestList', res)
+
+        $('#suggest-list').html(htmlstr).show()
+        // 获取用户输入的内容，当作键 ，需要将数据作为值进行缓存
+
+        let k = $('.ipt').val().trim()
+        cacheObj[k] = res
+      }
+
+
+
+    })
+  </script>
+</body>
+
+</html>

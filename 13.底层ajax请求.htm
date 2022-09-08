@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let xhr = new XMLHttpRequest()
+    // 设置地址和请求方式   
+    xhr.open('get', 'http://www.liulongbin.top:3006/api/getbooks')
+    // 发送请求
+    xhr.send()
+    // xhr.onreadystatechange = function () {
+    //   if (xhr.readyState === 4 && xhr.status === 200)
+    //     console.log(JSON.parse(xhr.responseText));
+    // }
+    // onload等待浏览器请求结束才会触发
+    // 接受服务器返回的数据
+    xhr.onload = function () {
+      console.log(JSON.parse(xhr.responseText));
+    }
+  </script>
+</body>
+
+</html>

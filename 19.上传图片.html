@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="">
+</head>
+
+<body>
+  <!-- 1. 文件选择框 -->
+  <input type="file" id="file1" multiple />
+
+  <!-- 2. 上传文件的按钮 -->
+  <button id="btnUpload">上传文件</button>
+  <br />
+  <!-- 3. img 标签，来显示上传成功以后的图片 -->
+  <img src="" alt="" id="img" width="800" />
+
+  <div id="wrap" style="display: none; width: 500px; height: 40px; border: 1px solid #000;">
+    <div id="inner" style="height: 40px; width:0;background-color: aqua;"></div>
+  </div>
+</body>
+<script>
+  let btn = document.querySelector('#btnUpload')
+  let myfile = document.querySelector('#file1')
+  btn.onclick = function () {
+    if (myfile.files.length == 0) {
+      alert('文件不能为空')
+      return
+    }
+    // 获取第一个内容，第二是length
+    let myf = myfile.files[0]
+    let fd = new FormData()
+    fd.append('avatar', myf)
+    // 把FormData发到后台
+    let xhr = new XMLHttpRequest()
+    // 文件总的大小    当前上传了数据量  e.loaded / e.total
+    // onprogress 文件开始上传，onprogress事件就会立刻触发
+    xhr.upload.onprogress = function (e) {
+      document.querySelector('#wrap').style.dispaly ='block'
+      // 计算出当前上传的进度 （百分比）
+      let bl = Math.ceil(e.loaded / e.total * 100) + '%'
+      document.querySelector('#inner').style.width = bl;
+    }
+    //监听是否完成进度  
+    xhr.upload.onload =function(){
+      document.querySelector('#inner').style.background ='green';
+    
+      setTimeout(function(){
+        document.querySelector('#wrap').style.dispaly ='none'
+      },1000)
+    }
+
+    
+    xhr.open('post', 'http://www.liulongbin.top:3006/api/upload/avatar')
+    xhr.send(fd)
+    xhr.onload = function () {
+      if (xhr.status == 200) {
+        let obj = JSON.parse(xhr.responseText);
+        //把服务器返回的地址拼接上服务器的域名，形成完整的图片地址，赋值给src,完成预览
+        img.src = "http://www.liulongbin.top:3006" + obj.url;
+      } else {
+        alert('上传失败')
+      }
+    }
+  }
+
+</script>
+
+</html>

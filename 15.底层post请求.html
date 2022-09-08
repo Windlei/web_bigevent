@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let xhr = new XMLHttpRequest()
+    // 设置地址和请求方式
+    xhr.open('post', 'http://www.liulongbin.top:3006/api/addbook')
+
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    // 发送请求
+    xhr.send('bookname=mvyk&author=ql&publisher=hm')
+    // onload等待浏览器请求结束才会触发
+    xhr.onload = function () {
+      console.log(xhr.responseText);
+    }
+  </script>
+</body>
+
+</html>

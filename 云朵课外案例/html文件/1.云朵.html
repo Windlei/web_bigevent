@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .cf {
+      width: 1000px;
+      height: 800px;
+      margin: 100px auto;
+      background-image: url(../img文件/cloud.jpg);
+      background-repeat: no-repeat;
+      background-size: 1000px 800px;
+      position: relative;
+    }
+
+    .cv {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: red;
+      position: absolute;
+      left: 40px;
+      top: 200px;
+
+    }
+
+    .niuniu {
+      width: 10px;
+      height: 100px;
+      border-left: 1px solid #000;
+      position: absolute;
+      top: -100px;
+      left: 18px;
+    }
+  </style>
+</head>
+<button>添加圆圈</button>
+
+<body>
+  <div class="cf">
+    <div class="cv">
+      <div class="niuniu"></div>
+    </div>
+    <div class="cv">
+      <div class="niuniu"></div>
+    </div>
+    <div class="cv">
+      <div class="niuniu"></div>
+    </div>
+    <div class="cv">
+      <div class="niuniu"></div>
+    </div>
+    <div class="cv">
+      <div class="niuniu"></div>
+    </div>
+  </div>
+  <script>
+    function df() {
+      const div = document.querySelectorAll('.cv')
+      for (let i = 0; i < div.length; i++) {
+        let num = Math.random() * 800
+        let num1 = Math.random() * 600
+        div[i].style.left = num + 'px'
+        div[i].style.top = num1 + 'px'
+      }
+    }
+    df()
+    let vb = setInterval(df, 1000)
+    const cf = document.querySelector('.cf')
+    function dc() {
+      document.querySelector('button').addEventListener('click', function () {
+        const div = `  <div class="cf">
+           <div class="cv">
+          <div class="niuniu"></div>
+           </div>`
+
+      })
+      cf.append(div)
+    }
+    dc()
+
+    // function dv() {
+    //   cf.addEventListener('mouseover', function () {
+    //     clearInterval(vb)
+    //   })
+    // }
+    // dv()
+  </script>
+</body>
+
+</html>
